@@ -7,13 +7,17 @@ angular.module('app')
   }*/
   
   this.addAcct = function (acct) {
-    return $http.post('/api/type', acct);
+    return $http.post('/api/type/acct', acct);
+  }
+
+  this.addCust = function (cust) {
+    return $http.post('/api/type/cust', cust);
   }
   
   this.findAcct = function (acct) {
 		// as much bussiness logic as possible into services (and away from controller)
 		if(isNaN(acct)) { // returns true if acct is NOT a valid number
-			console.log('TypeSvc name: ' + acct);
+			//console.log('TypeSvc name: ' + acct);
 			// split search string into numeric (if at all) and non-numeric
 			var numRegMatch = ".*";
 			acct.match(/\d+/g).forEach( function (item) {
@@ -33,11 +37,9 @@ angular.module('app')
 				method: "GET",
 				params: { acct: acct }
 			});*/
-			
-			
 		} else {
 			// try account search by zip (only number)
-			console.log('TypeSvc zip: ' + acct);
+			//console.log('TypeSvc zip: ' + acct);
 			return $http({ // try account search by zip
 				url: '/api/type/acct_zip',
 				method: "GET",
@@ -47,7 +49,14 @@ angular.module('app')
   }
   
   this.findCust = function (cust) {
-    return $http.get('/api/type/cust', cust);
+	// as much bussiness logic as possible into services (and away from controller)
+	// todo: improve search to include first and last name
+	var txtRegMatch = ".*" + cust + ".*";
+	return $http({ // try account search by name
+		url: '/api/type/cust_name',
+		method: "GET",
+		params: { lastname: txtRegMatch } // todo: change this, omly temp!
+	});
   }
   
 });
