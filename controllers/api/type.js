@@ -1,19 +1,17 @@
 // API for types
-var Type = require('../../models/type');
-var User   = require('../../models/user');
-var Acct = require('../../models/acct');
-var Cust = require('../../models/cust');
+var Type = require('../../models/type');	// typing event (collects user ans answers for a given date)
+var User   = require('../../models/user');	// user
+var Acct = require('../../models/acct');	// account
+var Cust = require('../../models/cust');	// customer in account
+var Quest = require('../../models/quest');	// question and possible answers with points
 var router = require('express').Router();
 
 router.get('/', function (req, res, next) { // get endpoint: note namespace (.use in server.js)
-  /*Post.find()
-  .sort('-date')
-  .populate('_user') // use foreign key
-  .populate('username') // use foreign key
-  .exec(function (err, types) {
+  Quest.find()
+  .exec(function (err, quests) {
     if (err) { return next(err); }
-    res.json(types); // render out the types as JSON
-  });*/
+    res.json(quests); // render out the quests as JSON
+  });
 });
 
 router.get('/acct_name', function (req, res, next) { // get endpoint to find account by name: note namespace (.use in server.js)
@@ -133,8 +131,17 @@ router.post('/cust', function (req, res, next) { // post endpoint: note namespac
 							lastname:	req.body.lastname});
 	cust.save(function (err, cust) {
 		if (err) { return next(err); }
-		//console.log(post.img);
 		res.status(201).json(cust);
+	});
+});
+
+router.post('/quest', function (req, res, next) { // post endpoint: note namespace (.use in server.js)
+	var quest = new Quest({ 	question:	req.body.question,
+								answers:	req.body.answers,
+								points:		req.body.points});
+	quest.save(function (err, quest) {
+		if (err) { return next(err); }
+		res.status(201).json(quest);
 	});
 });
 

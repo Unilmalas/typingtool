@@ -1,15 +1,21 @@
 // Posts controller
 angular.module('app')
 .controller('TypeCtrl', function ($scope, TypeSvc) {
-	
-  $scope.addAcct = function () {
+
+  // initial load of questions (todo: when implementing types will need to change this)
+  TypeSvc.fetch()
+  .success(function (quests) {
+	$scope.quests = quests; // to be shown in question jumbotron
+  });
+
+  $scope.addAcct = function () { // test data
     //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
       TypeSvc.addAcct({
         name:     'testscct',
 		zip:	  '1130'
       })
-      .success(function (post) {
-
+      .success(function (acct) {
+		console.log('acct stored');
       })
     /*} else {
 		console.log('You are not authenticated or post empty!');
@@ -30,14 +36,14 @@ angular.module('app')
 	  $scope.accts = [];
   }
 
-  $scope.addCust = function () {
+  $scope.addCust = function () { // test data
     //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
       TypeSvc.addCust({
         firstname:     'John',
 		lastname:	  'Doe'
       })
-      .success(function (post) {
-
+      .success(function (cust) {
+		console.log('cust stored');
       })
     /*} else {
 		console.log('You are not authenticated or post empty!');
@@ -62,4 +68,20 @@ angular.module('app')
 		  $scope.myAcct = custacct.name;
 	  })
   }
+  
+  $scope.addQuest = function () { // test data
+    //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
+      TypeSvc.addQuest({
+        question:	' What is the capital of Assyria?',
+		answers:	["I don't know that.", "Ashur", "Babylon"],
+		points:		[0, 2, 1]
+      })
+      .success(function (quest) {
+		console.log('question stored');
+      })
+    /*} else {
+		console.log('You are not authenticated or post empty!');
+	}*/
+  }
+  
 });

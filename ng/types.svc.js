@@ -2,9 +2,9 @@
 angular.module('app')
 .service('TypeSvc', function ($http) {
 	
-  /*this.fetch = function (acct) {
-    return $http.get('/api/type', acct);
-  }*/
+  this.fetch = function () {
+    return $http.get('/api/type');
+  }
   
   this.addAcct = function (acct) {
     return $http.post('/api/type/acct', acct);
@@ -12,6 +12,10 @@ angular.module('app')
 
   this.addCust = function (cust) {
     return $http.post('/api/type/cust', cust);
+  }
+  
+  this.addQuest = function (cust) {
+    return $http.post('/api/type/quest', cust);
   }
   
   this.findAcct = function (acct) {
