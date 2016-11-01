@@ -48,6 +48,15 @@ angular.module('app')
 		}
   }
   
+  this.findAcctforCust = function (cust) {
+	// assume cust is a valid customer (call comes from controller after customer is chosen from list)
+	return $http({ // try account search by zip
+		url: '/api/type/acct_id',
+		method: "GET",
+		params: { _id: cust._acct }
+	});
+  }
+  
   this.findCust = function (cust) {
 	// as much bussiness logic as possible into services (and away from controller)
 	var txtRegMatch = cust.split(" ");

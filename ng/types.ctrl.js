@@ -54,7 +54,12 @@ angular.module('app')
   }
   
   $scope.setCust = function (cust) {
-	  $scope.myCust = cust.lastname;
+	  $scope.myCust = cust.firstname + " " + cust.lastname;
 	  $scope.custs = [];
+	  TypeSvc.findAcctforCust (cust)
+	  .success(function (custacct) {
+		  //console.log('setcust ' + JSON.stringify(custacct) + ' acct name ' + custacct.name);
+		  $scope.myAcct = custacct.name;
+	  })
   }
 });

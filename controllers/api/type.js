@@ -16,7 +16,7 @@ router.get('/', function (req, res, next) { // get endpoint: note namespace (.us
   });*/
 });
 
-router.get('/acct_name', function (req, res, next) { // get endpoint to find account: note namespace (.use in server.js)
+router.get('/acct_name', function (req, res, next) { // get endpoint to find account by name: note namespace (.use in server.js)
   var srchPattern = req.query.acct;
   Acct.find({ name: { $regex: srchPattern, $options: 'i' } }) // find returns cursor to the result, pattern-match to regex
   .exec(function (err, accts) {
@@ -34,7 +34,7 @@ router.get('/acct_name', function (req, res, next) { // get endpoint to find acc
   });
 });
 
-router.get('/acct_mixed', function (req, res, next) { // get endpoint to find account: note namespace (.use in server.js)
+router.get('/acct_mixed', function (req, res, next) { // get endpoint to find account by zip and name: note namespace (.use in server.js)
   var srchName = req.query.name;
   var srchZip = req.query.zip;
   //console.log('mixed srch: ' + srchName + ' zip ' + srchZip);
@@ -57,7 +57,7 @@ router.get('/acct_mixed', function (req, res, next) { // get endpoint to find ac
   });
 });
 
-router.get('/acct_zip', function (req, res, next) { // get endpoint to find account: note namespace (.use in server.js)
+router.get('/acct_zip', function (req, res, next) { // get endpoint to find account by zip: note namespace (.use in server.js)
   var srchPattern = req.query.acct;
   Acct.find({ zip: { $regex: srchPattern, $options: 'i' } }) // find returns cursor to the result, pattern-match to regex
   .exec(function (err, accts) {
@@ -73,6 +73,14 @@ router.get('/acct_zip', function (req, res, next) { // get endpoint to find acco
 		res.json(macct); // temp */
 		res.json(accts);
 	}
+  });
+});
+
+router.get('/acct_id', function (req, res, next) { // get endpoint to find account by id: note namespace (.use in server.js)
+  Acct.findOne({ _id: req.query._id }) // find returns cursor to the result
+  .exec(function (err, acct) {
+    if (err) { return next(err); }
+	res.json(acct);
   });
 });
 
