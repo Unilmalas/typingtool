@@ -50,8 +50,11 @@ angular.module('app')
   
   this.findCust = function (cust) {
 	// as much bussiness logic as possible into services (and away from controller)
-	// todo: improve search to include first and last name
-	var txtRegMatch = ".*" + cust + ".*";
+	var txtRegMatch = cust.split(" ");
+	/*txtRegMatch.forEach(function(item, index, arr) {
+        arr[index] = "/" + item + "/i"; // this will be used with $in: JS regex required by mongo https://docs.mongodb.com/manual/reference/operator/query/regex/
+    });*/
+	//console.log('findCust svc: ' + txtRegMatch);
 	return $http({ // try account search by name
 		url: '/api/type/cust_name',
 		method: "GET",

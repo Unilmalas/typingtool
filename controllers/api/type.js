@@ -38,7 +38,7 @@ router.get('/acct_mixed', function (req, res, next) { // get endpoint to find ac
   var srchName = req.query.name;
   var srchZip = req.query.zip;
   //console.log('mixed srch: ' + srchName + ' zip ' + srchZip);
-  Acct.find( { 	$and : [
+  Acct.find( { 	$and: [
 					{ name: { $regex: srchName, $options: 'i' } },
 					{ zip:  { $regex: srchZip, $options: 'i' } } 
 			]}) // find returns cursor to the result, pattern-match to regex
@@ -77,12 +77,19 @@ router.get('/acct_zip', function (req, res, next) { // get endpoint to find acco
 });
 
 router.get('/cust_name', function (req, res, next) { // get endpoint to find account: note namespace (.use in server.js)
-  var srchPattern = req.query.lastname;
-  //console.log('get cust: ' + srchPattern);
-  Cust.find({ lastname: { $regex: srchPattern, $options: 'i' } }) // find returns cursor to the result, pattern-match to regex
+  var srchStr = "" + req.query.lastname;
+  var srchPattern = srchStr.split(",");
+  srchPattern.forEach( function (item, index, arr) {
+	  arr[index] = RegExp(arr[index], "i");
+  });
+  //console.log('get cust: ' + srchPattern + ' type ' + typeof srchPattern[0]);
+  Cust.find( { $or: [
+						{ firstname: 	{ $in: srchPattern }},
+						{ lastname: 	{ $in: srchPattern }}
+					]}) // find returns cursor to the result, pattern-match to regex
   .exec(function (err, custs) {
     if (err) { return next(err); }
-	//console.log('get cust: ' + srchPattern + ' custs ' + custs + custs.length);
+	//console.log('get cust find: ' + srchPattern + ' custs ' + custs + custs.length);
 	if(custs.length) {
 		res.json(custs);
 	}
