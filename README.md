@@ -1,9 +1,10 @@
 # typingtool
 customer typing tool
 
-very first draft, just includes a slightly improved search for accounts by zip or name
+customer, acct search
 
-next steps:
-- implement search results list on accounts
-- copy search to customers
-- question/answer/types API
+allows for variable number of questions and answers to be deployed
+
+results stored by typing session, e.g. to use as a sales pipeline tool
+
+todo: user management needs wiring up
