@@ -14,8 +14,8 @@ angular.module('app')
     return $http.post('/api/type/cust', cust);
   }
   
-  this.addQuest = function (cust) {
-    return $http.post('/api/type/quest', cust);
+  this.addQuest = function (quest) {
+    return $http.post('/api/type/quest', quest);
   }
   
   this.findAcct = function (acct) {
@@ -73,6 +73,20 @@ angular.module('app')
 		method: "GET",
 		params: { lastname: txtRegMatch } // todo: change this, omly temp!
 	});
+  }
+  
+  this.submitAnswers = function (cust, quests, tanswers) {
+	// first post type, then post quests and answer for each question, referencing type
+	// compile data to submit to post
+	var mydata = {};
+	var mycust = cust.split(" ");
+	//console.log('cust: ' + cust + ' quests ' + JSON.stringify(quests) + ' tanswers ' + tanswers);
+	mydata.firstname = mycust[0];
+	mydata.lastname = mycust[1];
+	mydata.quests = quests;
+	mydata.tanswers = tanswers;
+	//console.log('JSON submit answer: ' + JSON.stringify(mydata));
+	return $http.post('/api/type/answers', mydata);
   }
   
 });
