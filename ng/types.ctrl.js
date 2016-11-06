@@ -7,11 +7,16 @@ angular.module('app')
   .success(function (quests) {
 	$scope.trackAnswers = []; // to track answered questions
 	$scope.nQuest = 0; // number of questions to be answered
+	$scope.answersIncomplete = false; // answers incomplete flag to display message
 	$scope.quests = quests; // to be shown in question jumbotron
 	// internal storage to track answered questions
 	var i=0;
 	for(quest in quests) $scope.trackAnswers[i++] = -1;
 	$scope.nQuest = i;
+	
+	$scope.myAcct = null; // inits acct
+	$scope.myAcctId = null;
+	$scope.myCust = null; // inits cust
   });
 
   $scope.addAcct = function () { // test data
@@ -39,6 +44,7 @@ angular.module('app')
   
   $scope.setAcct = function (acct) {
 	  $scope.myAcct = acct.name;
+	  $scope.myAcctId = acct._id;
 	  $scope.accts = [];
   }
 
@@ -58,10 +64,17 @@ angular.module('app')
   
   $scope.findCust = function () {
 		//if ($scope.isAuth) {
-			TypeSvc.findCust ($scope.myCust)
-			.success(function (custs) {
-				$scope.custs = custs;
-			});
+			if ($scope.myAcctId) { // myAcct is set: search customers with restriction to acct
+				TypeSvc.findCust ($scope.myAcctId, $scope.myCust)
+				.success(function (custs) {
+					$scope.custs = custs;
+				});
+			} else { // to do: take out and let svc deal with it
+				TypeSvc.findCust (null, $scope.myCust)
+				.success(function (custs) {
+					$scope.custs = custs;
+				});				
+			}
 		//}
   }
   
@@ -72,6 +85,7 @@ angular.module('app')
 	  .success(function (custacct) {
 		  //console.log('setcust ' + JSON.stringify(custacct) + ' acct name ' + custacct.name);
 		  $scope.myAcct = custacct.name;
+		  $scope.myAcctId = custacct._id;
 	  });
   }
   
@@ -97,6 +111,16 @@ angular.module('app')
   }
   
   $scope.submitAnswers = function () {
+	  // check if all questions have been answered
+	  var i=0;
+	  for (i=0; i<$scope.trackAnswers.length; i++) {
+		  if($scope.trackAnswers[i]<0) break;
+	  }
+	  if(i<$scope.nQuest) {
+		  console.log('not all questions answered');
+		  $scope.answersIncomplete = true; // show warning (ng-show)
+		  return;
+	  } else $scope.answersIncomplete = false;
 	  // submit answers to db
 	  TypeSvc.submitAnswers ($scope.myCust, $scope.quests, $scope.trackAnswers)
 	  .success(function () {

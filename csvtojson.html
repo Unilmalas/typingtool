@@ -1,0 +1,35 @@
+<input type='file' accept='text/plain' onchange='openFile(event)'><br>
+<img id='output'>
+<a id="save" download="cust.json">Save</a>
+<script>
+  // file ops from http://www.javascripture.com/FileReader
+  var openFile = function (event) {
+    var input = event.target;
+
+    var reader = new FileReader(); // Constructs a new FileReader.
+    reader.onload = function() { // Called when a read operation successfully completes.
+      var text = reader.result; // The result from the previous read. The result will be either a String or an ArrayBuffer.
+	  var outdoc = text.split("\n"); // split csv-file at newlines -> each array element one document
+      //console.log(outdoc[0] + ' 2: ' + outdoc[1]);
+	  var outfile = "";
+	  var outlen = outdoc.length-1;
+	  for (var i = 1; i < outlen; i++) { // start with i=1 since first line contains header
+		var doc = outdoc[i].split(",");
+		var oid = doc[2].substring(0, 9) + '"' + doc[2].substring(9, 33) + '")';
+		outfile += '{"firstname":"' + doc[0] + '","lastname":"' + doc[1] + '","_acct":' + oid + '}';
+		//console.log('{ "firstname": "' + doc[0] + '", "lastname": "' + doc[1] + '", "_acct": ' + doc[2] + '},');
+		//console.log(outlen + ' : ' + i);
+	  }
+	  //console.log(outfile);
+	  setSaveFile(outfile, 'cust.json', '');
+    };
+    reader.readAsText(input.files[0]); // Begins reading from blob as a string. The result will be stored on this.result after the 'load' event fires.
+	
+	function setSaveFile(contents, file_name, mime_type) {
+	  var a = document.getElementById('save');
+	  mime_type = mime_type || 'application/octet-stream'; // text/html, image/png, et c
+	  if (file_name) a.setAttribute('download', file_name);
+	  a.href = 'data:'+ mime_type +';base64,'+ btoa(unescape(encodeURIComponent(contents)) || '');
+	}
+  };
+</script>

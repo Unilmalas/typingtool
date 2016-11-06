@@ -21,17 +21,24 @@ angular.module('app')
   this.findAcct = function (acct) {
 		// as much bussiness logic as possible into services (and away from controller)
 		if(isNaN(acct)) { // returns true if acct is NOT a valid number
-			//console.log('TypeSvc name: ' + acct);
 			// split search string into numeric (if at all) and non-numeric
 			var numRegMatch = ".*";
-			acct.match(/\d+/g).forEach( function (item) {
-				numRegMatch += item + ".*";
-			});
+			var res = acct.match(/\d+/g);
+			//console.log('TypeSvc name: ' + acct + ' res1: ' + res);
+			if (res!=null) {
+				res.forEach( function (item) {
+					numRegMatch += item + ".*";
+				});
+			}
 			var txtRegMatch = ".*";
-			acct.match(/\D+/g).forEach( function (item) {
-				txtRegMatch += item.trim() + ".*";
-			});
-			return $http({ // try account search by name
+			res = acct.match(/\D+/g);
+			//console.log('TypeSvc name: ' + acct + ' res2: ' + res);
+			if (res!=null) {
+				acct.match(/\D+/g).forEach( function (item) {
+					txtRegMatch += item.trim() + ".*";
+				});
+			}
+			return $http({ // try account search by name or zip: careful here: currently thats "or", if and the separate name-only search has to be actvated
 				url: '/api/type/acct_mixed',
 				method: "GET",
 				params: { name: txtRegMatch, zip: numRegMatch }
@@ -54,25 +61,30 @@ angular.module('app')
   
   this.findAcctforCust = function (cust) {
 	// assume cust is a valid customer (call comes from controller after customer is chosen from list)
-	return $http({ // try account search by zip
+	return $http({ // try account search by id from cust
 		url: '/api/type/acct_id',
 		method: "GET",
 		params: { _id: cust._acct }
 	});
   }
   
-  this.findCust = function (cust) {
+  this.findCust = function (acct, cust) {
 	// as much bussiness logic as possible into services (and away from controller)
-	var txtRegMatch = cust.split(" ");
-	/*txtRegMatch.forEach(function(item, index, arr) {
-        arr[index] = "/" + item + "/i"; // this will be used with $in: JS regex required by mongo https://docs.mongodb.com/manual/reference/operator/query/regex/
-    });*/
+	var txtRegMatch = cust==null ? "" : cust;
 	//console.log('findCust svc: ' + txtRegMatch);
-	return $http({ // try account search by name
-		url: '/api/type/cust_name',
-		method: "GET",
-		params: { lastname: txtRegMatch } // todo: change this, omly temp!
-	});
+	if (acct == null) {
+		return $http({ // try cust search by name
+			url: '/api/type/cust_name',
+			method: "GET",
+			params: { lastname: txtRegMatch } // todo: change latname to both names, omly temp!
+		});
+	} else { // acct is set, restrict search to customers in acct
+		return $http({ // try cust search by name
+			url: '/api/type/cust_acct',
+			method: "GET",
+			params: { lastname: txtRegMatch, _acct: acct } // todo: change latname to both names, omly temp!
+		});		
+	}
   }
   
   this.submitAnswers = function (cust, quests, tanswers) {

@@ -25,7 +25,7 @@
 			</div><!-- /input-group -->
 			<!--button class="btn btn-default" type="button" ng-click="addCust()">add customer</button-->
 			<div class="container resCust">
-				<div ng-class="list ? 'col-md-6' : 'col-md-4'" class="accounts" ng-repeat="cust in custs" ng-click="setCust(cust)"> 
+				<div ng-class="list ? 'col-md-6' : 'col-md-4'" class="custs" ng-repeat="cust in custs" ng-click="setCust(cust)"> 
 					<h4 ng-class="list ? 'col-md-10' : 'col-md-12'">{{ cust.firstname }} {{ cust.lastname }}</h4> 
 				</div>
 			</div>
@@ -45,4 +45,7 @@
 </div>
 <div class="col-md-10">
 	<button class="btn btn-default pull-right" type="button" ng-click="submitAnswers()">Submit Answers</button>
+</div>
+<div ng-show="answersIncomplete">
+	<h4>Please answer all questions.</h4>
 </div>
