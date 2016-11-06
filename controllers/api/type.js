@@ -16,7 +16,7 @@ router.get('/', function (req, res, next) { // get endpoint: note namespace (.us
 });
 
 router.get('/acct_name', function (req, res, next) { // get endpoint to find account by name: note namespace (.use in server.js)
-  var srchPattern = req.query.acct==null ? "/.*/" : ("/.*" + req.query.acct + "/");
+  var srchPattern = req.query.acct==null ? ".*" : ("/.*" + req.query.acct + "/");
   Acct.find({ name: { $regex: srchPattern, $options: 'i' } }) // find returns cursor to the result, pattern-match to regex
   .exec( function (err, accts) {
     if (err) { return next(err); }
@@ -28,11 +28,15 @@ router.get('/acct_name', function (req, res, next) { // get endpoint to find acc
 
 router.get('/acct_mixed', function (req, res, next) { // get endpoint to find account by zip and name: note namespace (.use in server.js)
   var srchName = req.query.name;
-  var srchZip = req.query.zip;
-  console.log('mixed srch: ' + srchName + ' zip ' + srchZip);
+  if(req.query.zip.match(/^\d+$/)) {
+	var srchZip = parseInt(req.query.zip);
+  } else {
+	var srchZip = 0;
+  }
+  //console.log('mixed srch: ' + srchName + ' zip ' + srchZip);
   Acct.find( { 	$or: [
 					{ name: { $regex: srchName, $options: 'i' } },
-					{ zip:  { $regex: srchZip, $options: 'i' } } 
+					{ zip:  srchZip } 
 			]}) // find returns cursor to the result, pattern-match to regex
   .exec( function (err, accts) {
     if (err) { return next(err); }
@@ -43,14 +47,30 @@ router.get('/acct_mixed', function (req, res, next) { // get endpoint to find ac
 });
 
 router.get('/acct_zip', function (req, res, next) { // get endpoint to find account by zip: note namespace (.use in server.js)
-  var srchPattern = req.query.acct;
-  Acct.find({ zip: { $regex: srchPattern, $options: 'i' } }) // find returns cursor to the result, pattern-match to regex
-  .exec( function (err, accts) {
-    if (err) { return next(err); }
-	if(accts.length) {
-		res.json(accts);
-	}
-  });
+  if(req.query.acct == "") {
+	  Acct.find({ zip: { $gt: 0, $lt: 9999 }}) // find returns cursor to the result
+	  .exec( function (err, accts) {
+		if (err) { return next(err); }
+		//console.log('acct zip find: ' + accts + ' err ' + err);
+		if(accts.length) {
+			res.json(accts);
+		}
+	  });
+  } else {
+	  if(req.query.acct.match(/^\d+$/)) {
+		var srchZip = parseInt(req.query.acct);
+	  } else {
+		var srchZip = 0;
+	  }
+	  Acct.find({ zip: srchZip}) // find returns cursor to the result
+	  .exec( function (err, accts) {
+		if (err) { return next(err); }
+		//console.log('acct zip find: ' + accts + ' err ' + err);
+		if(accts.length) {
+			res.json(accts);
+		}
+	  });	  
+  }
 });
 
 router.get('/acct_id', function (req, res, next) { // get endpoint to find account by id: note namespace (.use in server.js)
@@ -64,16 +84,16 @@ router.get('/acct_id', function (req, res, next) { // get endpoint to find accou
 router.get('/cust_name', function (req, res, next) { // get endpoint to find customer: note namespace (.use in server.js)
   var srchStr = "" + req.query.lastname;
   var srchPattern = "";
-  if(srchStr=="") srchPattern="/.*/i";
-  else srchPattern = "/.*" + srchStr + ".*/i";
-  console.log('get cust: ' + srchPattern + ' type ' + typeof srchPattern[0]);
+  if(srchStr=="") srchPattern=".*";
+  else srchPattern = srchStr + ".*";
+  //console.log('get cust: ' + srchPattern + ' type ' + typeof srchPattern[0]);
   Cust.find( { $or: [
-						{ firstname: 	{ $regex: srchPattern }}, // for $in only js-style /patterns/ work!
-						{ lastname: 	{ $regex: srchPattern }}
+						{ firstname: 	{ $regex: srchPattern, $options: 'i' }}, // for $in only js-style /patterns/ work!
+						{ lastname: 	{ $regex: srchPattern, $options: 'i' }}
 					]}) // find returns cursor to the result, pattern-match to regex
   .exec( function (err, custs) {
     if (err) { return next(err); }
-	console.log('get cust find: ' + srchPattern + ' custs ' + custs + custs.length);
+	//console.log('get cust find: ' + srchPattern + ' custs ' + custs + custs.length);
 	if(custs.length) {
 		res.json(custs);
 	}
@@ -84,19 +104,19 @@ router.get('/cust_acct', function (req, res, next) { // get endpoint to find cus
   var srchStr = "" + req.query.lastname; // fetch lastname from parameters
   var acctid = req.query._acct; // acct id from parameters
   var srchPattern = "";
-  if(srchStr=="") srchPattern="/.*/i";
-  else srchPattern = "/.*" + srchStr + ".*/i";
-  console.log('get cust: ' + srchPattern + ' type ' + typeof srchPattern[0] + ' acctid: ' + acctid);
+  if(srchStr=="") srchPattern=".*";
+  else srchPattern = ".*" + srchStr + ".*";
+  //console.log('get cust: ' + srchPattern + ' type ' + typeof srchPattern[0] + ' acctid: ' + acctid);
   Cust.find( {
 			$and: [
 				{ $or: [
-						{ firstname: 	{ $regex: srchPattern }}, // for $in only js-style /patterns/ work!
-						{ lastname: 	{ $regex: srchPattern }}
+						{ firstname: 	{ $regex: srchPattern, $options: 'i' }}, // for $in only js-style /patterns/ work!
+						{ lastname: 	{ $regex: srchPattern, $options: 'i' }}
 					]},
-				{ _acct: acctid }]}) // find returns cursor to the result, pattern-match to regex
+				{ _acct: acctid }]}) // fmatch to account id of the current account chosen (show only those customers in that account)
   .exec( function (err, custs) {
     if (err) { return next(err); }
-	console.log('get cust find: ' + srchPattern + ' custs ' + custs + custs.length);
+	//console.log('get cust find: ' + srchPattern + ' custs ' + custs + custs.length);
 	if(custs.length) {
 		res.json(custs);
 	}

@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
 
 var Acct = db.model('Acct', {
 	name:	{ type: String,   required: true },
-	zip:	{ type: String,   required: true }
+	zip:	{ type: Number,   required: true }
 });
 
 module.exports = Acct;

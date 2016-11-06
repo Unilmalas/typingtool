@@ -22,12 +22,12 @@ angular.module('app')
 		// as much bussiness logic as possible into services (and away from controller)
 		if(isNaN(acct)) { // returns true if acct is NOT a valid number
 			// split search string into numeric (if at all) and non-numeric
-			var numRegMatch = ".*";
+			var numRegMatch = "";
 			var res = acct.match(/\d+/g);
 			//console.log('TypeSvc name: ' + acct + ' res1: ' + res);
 			if (res!=null) {
 				res.forEach( function (item) {
-					numRegMatch += item + ".*";
+					numRegMatch += item;
 				});
 			}
 			var txtRegMatch = ".*";
@@ -38,6 +38,7 @@ angular.module('app')
 					txtRegMatch += item.trim() + ".*";
 				});
 			}
+			//console.log('findAcct: ' + res + ' : ' + txtRegMatch);
 			return $http({ // try account search by name or zip: careful here: currently thats "or", if and the separate name-only search has to be actvated
 				url: '/api/type/acct_mixed',
 				method: "GET",
@@ -50,6 +51,7 @@ angular.module('app')
 			});*/
 		} else {
 			// try account search by zip (only number)
+			if(acct==null) acct = "";
 			//console.log('TypeSvc zip: ' + acct);
 			return $http({ // try account search by zip
 				url: '/api/type/acct_zip',
