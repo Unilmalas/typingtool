@@ -125,6 +125,11 @@ angular.module('app')
 	  TypeSvc.submitAnswers ($scope.myCust, $scope.quests, $scope.trackAnswers)
 	  .success(function () {
 		console.log('answers submitted');
+		
+		// clear account and customer after submit
+		$scope.myAcct = null; // inits acct
+		$scope.myAcctId = null;
+		$scope.myCust = null; // inits cust
 	  });	  
   }
   
