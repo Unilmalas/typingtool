@@ -2,8 +2,10 @@
 angular.module('app')
 .controller('TypeCtrl', function ($scope, TypeSvc) {
   
+  $scope.module = "jak"; // hard-coded for now, will add a wrapper later and set it there
+  
   // initial load of questions (todo: when implementing types will need to change this)
-  TypeSvc.fetch()
+  TypeSvc.fetch($scope.module)
   .success(function (quests) {
 	$scope.trackAnswers = []; // to track answered questions
 	$scope.nQuest = 0; // number of questions to be answered
@@ -22,6 +24,7 @@ angular.module('app')
   $scope.addAcct = function () { // test data
     //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
       TypeSvc.addAcct({
+		module:	  'jak',
         name:     'testscct',
 		zip:	  '1130'
       })
@@ -51,6 +54,7 @@ angular.module('app')
   $scope.addCust = function () { // test data
     //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
       TypeSvc.addCust({
+		module:	  'jak',
         firstname:     'John',
 		lastname:	  'Doe'
       })
@@ -92,6 +96,8 @@ angular.module('app')
   $scope.addQuest = function () { // test data
     //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
       TypeSvc.addQuest({
+		module:	  	'jak',
+		type:		't',
         question:	'What is the capital of Assyria?',
 		answers:	["I don't know that.", "Ashur", "Babylon"],
 		points:		[0, 2, 1]
@@ -122,7 +128,8 @@ angular.module('app')
 		  return;
 	  } else $scope.answersIncomplete = false;
 	  // submit answers to db
-	  TypeSvc.submitAnswers ($scope.myCust, $scope.quests, $scope.trackAnswers)
+	  //console.log('submit answers ctrl: ' + $scope.module);
+	  TypeSvc.submitAnswers ($scope.module, $scope.myCust, $scope.quests, $scope.trackAnswers)
 	  .success(function () {
 		console.log('answers submitted');
 		

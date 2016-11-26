@@ -4,9 +4,10 @@ var mongoose = require('mongoose')
 
 
 var Cust = db.model('Cust', {
-	firstname:	{ type: String,   required: true },
-	lastname:	{ type: String,   required: true },
-	_acct:		{ type: Schema.ObjectId, 	ref: 'Acct' }
+	module:		{ type: String,				required: true }, // module
+	firstname:	{ type: String,   			required: true }, // customer first name
+	lastname:	{ type: String,   			required: true }, // customer last name
+	_acct:		{ type: Schema.ObjectId, 	ref: 'Acct' }	  // link to account
 });
 
 module.exports = Cust;

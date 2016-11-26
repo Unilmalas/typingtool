@@ -2,8 +2,14 @@
 angular.module('app')
 .service('TypeSvc', function ($http) {
 	
-  this.fetch = function () {
-    return $http.get('/api/type');
+  this.fetch = function (module) {
+    //return $http.get('/api/type');
+	//console.log('service fetch: ' + module);
+	return $http({
+		url: '/api/type',
+		method: "GET",
+		params: { module: module }
+	});
   }
   
   this.addAcct = function (acct) {
@@ -89,12 +95,13 @@ angular.module('app')
 	}
   }
   
-  this.submitAnswers = function (cust, quests, tanswers) {
+  this.submitAnswers = function (module, cust, quests, tanswers) {
 	// first post type, then post quests and answer for each question, referencing type
 	// compile data to submit to post
 	var mydata = {};
 	var mycust = cust.split(" ");
-	//console.log('cust: ' + cust + ' quests ' + JSON.stringify(quests) + ' tanswers ' + tanswers);
+	//console.log('module: ' + module + 'cust: ' + cust + ' quests ' + JSON.stringify(quests) + ' tanswers ' + tanswers);
+	mydata.module = module;
 	mydata.firstname = mycust[0];
 	mydata.lastname = mycust[1];
 	mydata.quests = quests;

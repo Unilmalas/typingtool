@@ -8,7 +8,7 @@ var Answer = require('../../models/answer');// answers to questions
 var router = require('express').Router();
 
 router.get('/', function (req, res, next) { // get endpoint: note namespace (.use in server.js)
-  Quest.find()
+  Quest.find({ module: req.query.module }) // access passed parameters via req.query.xxxxx
   .exec( function (err, quests) {
     if (err) { return next(err); }
     res.json(quests); // render out the quests as JSON
@@ -17,7 +17,8 @@ router.get('/', function (req, res, next) { // get endpoint: note namespace (.us
 
 router.get('/acct_name', function (req, res, next) { // get endpoint to find account by name: note namespace (.use in server.js)
   var srchPattern = req.query.acct==null ? ".*" : ("/.*" + req.query.acct + "/");
-  Acct.find({ name: { $regex: srchPattern, $options: 'i' } }) // find returns cursor to the result, pattern-match to regex
+  Acct.find({ 	module: "jak",
+				name: { $regex: srchPattern, $options: 'i' } }) // find returns cursor to the result, pattern-match to regex
   .exec( function (err, accts) {
     if (err) { return next(err); }
 	if(accts.length) {
@@ -34,7 +35,8 @@ router.get('/acct_mixed', function (req, res, next) { // get endpoint to find ac
 	var srchZip = 0;
   }
   //console.log('mixed srch: ' + srchName + ' zip ' + srchZip);
-  Acct.find( { 	$or: [
+  Acct.find( { 	module: "jak",
+				$or: [
 					{ name: { $regex: srchName, $options: 'i' } },
 					{ zip:  srchZip } 
 			]}) // find returns cursor to the result, pattern-match to regex
@@ -48,7 +50,8 @@ router.get('/acct_mixed', function (req, res, next) { // get endpoint to find ac
 
 router.get('/acct_zip', function (req, res, next) { // get endpoint to find account by zip: note namespace (.use in server.js)
   if(req.query.acct == "") {
-	  Acct.find({ zip: { $gt: 0, $lt: 9999 }}) // find returns cursor to the result
+	  Acct.find({ 	module: "jak",
+					zip: { $gt: 0, $lt: 9999 }}) // find returns cursor to the result
 	  .exec( function (err, accts) {
 		if (err) { return next(err); }
 		//console.log('acct zip find: ' + accts + ' err ' + err);
@@ -62,7 +65,8 @@ router.get('/acct_zip', function (req, res, next) { // get endpoint to find acco
 	  } else {
 		var srchZip = 0;
 	  }
-	  Acct.find({ zip: srchZip}) // find returns cursor to the result
+	  Acct.find({ 	module: "jak",
+					zip: srchZip}) // find returns cursor to the result
 	  .exec( function (err, accts) {
 		if (err) { return next(err); }
 		//console.log('acct zip find: ' + accts + ' err ' + err);
@@ -87,7 +91,8 @@ router.get('/cust_name', function (req, res, next) { // get endpoint to find cus
   if(srchStr=="") srchPattern=".*";
   else srchPattern = srchStr + ".*";
   //console.log('get cust: ' + srchPattern + ' type ' + typeof srchPattern[0]);
-  Cust.find( { $or: [
+  Cust.find( { 	module: "jak",
+				$or: [
 						{ firstname: 	{ $regex: srchPattern, $options: 'i' }}, // for $in only js-style /patterns/ work!
 						{ lastname: 	{ $regex: srchPattern, $options: 'i' }}
 					]}) // find returns cursor to the result, pattern-match to regex
@@ -113,7 +118,8 @@ router.get('/cust_acct', function (req, res, next) { // get endpoint to find cus
 						{ firstname: 	{ $regex: srchPattern, $options: 'i' }}, // for $in only js-style /patterns/ work!
 						{ lastname: 	{ $regex: srchPattern, $options: 'i' }}
 					]},
-				{ _acct: acctid }]}) // fmatch to account id of the current account chosen (show only those customers in that account)
+				{ 	module: "jak",
+					_acct: acctid }]}) // fmatch to account id of the current account chosen (show only those customers in that account)
   .exec( function (err, custs) {
     if (err) { return next(err); }
 	//console.log('get cust find: ' + srchPattern + ' custs ' + custs + custs.length);
@@ -124,7 +130,8 @@ router.get('/cust_acct', function (req, res, next) { // get endpoint to find cus
 });
 
 router.post('/acct', function (req, res, next) { // post endpoint: note namespace (.use in server.js)
-	var acct = new Acct({ 	name:	req.body.name,
+	var acct = new Acct({ 	module: req.body.module,
+							name:	req.body.name,
 							zip:	req.body.zip});
 	acct.save( function (err, acct) {
 		if (err) { return next(err); }
@@ -148,7 +155,8 @@ router.post('/acct', function (req, res, next) { // post endpoint: note namespac
 });
 
 router.post('/cust', function (req, res, next) { // customer post endpoint: note namespace (.use in server.js)
-	var cust = new Cust({ 	firstname:	req.body.firstname,
+	var cust = new Cust({ 	module: req.body.module,
+							firstname:	req.body.firstname,
 							lastname:	req.body.lastname});
 	cust.save( function (err, cust) {
 		if (err) { return next(err); }
@@ -157,7 +165,9 @@ router.post('/cust', function (req, res, next) { // customer post endpoint: note
 });
 
 router.post('/quest', function (req, res, next) { // question post endpoint: note namespace (.use in server.js)
-	var quest = new Quest({ 	question:	req.body.question,
+	var quest = new Quest({ 	module: 	req.body.module,
+								type: 		req.body.type,
+								question:	req.body.question,
 								answers:	req.body.answers,
 								points:		req.body.points});
 	quest.save( function (err, quest) {
@@ -167,18 +177,23 @@ router.post('/quest', function (req, res, next) { // question post endpoint: not
 });
 
 router.post('/answers', function (req, res, next) { // answer post endpoint: note namespace (.use in server.js)
-	Cust.findOne({ firstname:	req.body.firstname,
+	//console.log('api post ' + req.body.module);
+	Cust.findOne({ 	module: 	req.body.module,
+					firstname:	req.body.firstname,
 					lastname:	req.body.lastname})
 	.exec( function (err, cust) {	// find customer by name to get index
 		if (err) { return next(err); }
 		// todo: check if cust is filled!
-		var type = new Type({	_cust:		cust._id}); // create type document with customer index, date autofilled
+		//console.log('api post cust: ' + cust._id);
+		var type = new Type({	module:		req.body.module,
+								_cust:		cust._id}); // create type document with customer index, date autofilled
 		type.save( function (err, type) {
 			if (err) { return next(err); }
 			var i=0;
 			for (quest in req.body.quests) {	// loop through all questions
 				//console.log('API answer post: ' + req.body.tanswers[i] + ' quest: ' + req.body.quests[0].question);
-				var answer = new Answer({	_type:		type._id,	// link answer to current typing event
+				var answer = new Answer({	module: 	req.body.quests[i].module, // module
+											_type:		type._id,	// link answer to current typing event
 											_quest:		req.body.quests[i]._id,	// add link to question of the answer
 											answer:		req.body.quests[i].answers[req.body.tanswers[i]],	// store answer chosen (choice is stored in tanswers)
 											answerpt:	req.body.quests[i].points[req.body.tanswers[i]]});	// add point value of the answer
