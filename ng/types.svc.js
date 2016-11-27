@@ -24,7 +24,7 @@ angular.module('app')
     return $http.post('/api/type/quest', quest);
   }
   
-  this.findAcct = function (acct) {
+  this.findAcct = function (module, acct) {
 		// as much bussiness logic as possible into services (and away from controller)
 		if(isNaN(acct)) { // returns true if acct is NOT a valid number
 			// split search string into numeric (if at all) and non-numeric
@@ -48,7 +48,7 @@ angular.module('app')
 			return $http({ // try account search by name or zip: careful here: currently thats "or", if and the separate name-only search has to be actvated
 				url: '/api/type/acct_mixed',
 				method: "GET",
-				params: { name: txtRegMatch, zip: numRegMatch }
+				params: { module: module, name: txtRegMatch, zip: numRegMatch }
 			});
 			/*return $http({ // try account search by name
 				url: '/api/type/acct_name',
@@ -62,21 +62,21 @@ angular.module('app')
 			return $http({ // try account search by zip
 				url: '/api/type/acct_zip',
 				method: "GET",
-				params: { acct: acct }
+				params: { module: module, acct: acct }
 			});
 		}
   }
   
-  this.findAcctforCust = function (cust) {
+  this.findAcctforCust = function (module, cust) {
 	// assume cust is a valid customer (call comes from controller after customer is chosen from list)
 	return $http({ // try account search by id from cust
 		url: '/api/type/acct_id',
 		method: "GET",
-		params: { _id: cust._acct }
+		params: { module: module, _id: cust._acct }
 	});
   }
   
-  this.findCust = function (acct, cust) {
+  this.findCust = function (module, acct, cust) {
 	// as much bussiness logic as possible into services (and away from controller)
 	var txtRegMatch = cust==null ? "" : cust;
 	//console.log('findCust svc: ' + txtRegMatch);
@@ -84,13 +84,13 @@ angular.module('app')
 		return $http({ // try cust search by name
 			url: '/api/type/cust_name',
 			method: "GET",
-			params: { lastname: txtRegMatch } // todo: change latname to both names, omly temp!
+			params: { module: module, lastname: txtRegMatch } // todo: change latname to both names, omly temp!
 		});
 	} else { // acct is set, restrict search to customers in acct
 		return $http({ // try cust search by name
 			url: '/api/type/cust_acct',
 			method: "GET",
-			params: { lastname: txtRegMatch, _acct: acct } // todo: change latname to both names, omly temp!
+			params: { module: module, lastname: txtRegMatch, _acct: acct } // todo: change latname to both names, omly temp!
 		});		
 	}
   }

@@ -17,7 +17,7 @@ router.get('/', function (req, res, next) { // get endpoint: note namespace (.us
 
 router.get('/acct_name', function (req, res, next) { // get endpoint to find account by name: note namespace (.use in server.js)
   var srchPattern = req.query.acct==null ? ".*" : ("/.*" + req.query.acct + "/");
-  Acct.find({ 	module: "jak",
+  Acct.find({ 	module: req.query.module,
 				name: { $regex: srchPattern, $options: 'i' } }) // find returns cursor to the result, pattern-match to regex
   .exec( function (err, accts) {
     if (err) { return next(err); }
@@ -28,14 +28,14 @@ router.get('/acct_name', function (req, res, next) { // get endpoint to find acc
 });
 
 router.get('/acct_mixed', function (req, res, next) { // get endpoint to find account by zip and name: note namespace (.use in server.js)
-  var srchName = req.query.name;
+  var srchName = req.query.name; // access passed parameters via req.query.xxxxx
   if(req.query.zip.match(/^\d+$/)) {
 	var srchZip = parseInt(req.query.zip);
   } else {
 	var srchZip = 0;
   }
   //console.log('mixed srch: ' + srchName + ' zip ' + srchZip);
-  Acct.find( { 	module: "jak",
+  Acct.find( { 	module: req.query.module,
 				$or: [
 					{ name: { $regex: srchName, $options: 'i' } },
 					{ zip:  srchZip } 
@@ -50,7 +50,7 @@ router.get('/acct_mixed', function (req, res, next) { // get endpoint to find ac
 
 router.get('/acct_zip', function (req, res, next) { // get endpoint to find account by zip: note namespace (.use in server.js)
   if(req.query.acct == "") {
-	  Acct.find({ 	module: "jak",
+	  Acct.find({ 	module: req.query.module,
 					zip: { $gt: 0, $lt: 9999 }}) // find returns cursor to the result
 	  .exec( function (err, accts) {
 		if (err) { return next(err); }
@@ -65,7 +65,7 @@ router.get('/acct_zip', function (req, res, next) { // get endpoint to find acco
 	  } else {
 		var srchZip = 0;
 	  }
-	  Acct.find({ 	module: "jak",
+	  Acct.find({ 	module: req.query.module,
 					zip: srchZip}) // find returns cursor to the result
 	  .exec( function (err, accts) {
 		if (err) { return next(err); }
@@ -78,7 +78,8 @@ router.get('/acct_zip', function (req, res, next) { // get endpoint to find acco
 });
 
 router.get('/acct_id', function (req, res, next) { // get endpoint to find account by id: note namespace (.use in server.js)
-  Acct.findOne({ _id: req.query._id }) // find returns cursor to the result
+  Acct.findOne({ 	module: req.query.module,
+					_id: req.query._id }) // find returns cursor to the result
   .exec( function (err, acct) {
     if (err) { return next(err); }
 	res.json(acct);
@@ -91,7 +92,7 @@ router.get('/cust_name', function (req, res, next) { // get endpoint to find cus
   if(srchStr=="") srchPattern=".*";
   else srchPattern = srchStr + ".*";
   //console.log('get cust: ' + srchPattern + ' type ' + typeof srchPattern[0]);
-  Cust.find( { 	module: "jak",
+  Cust.find( { 	module: req.query.module,
 				$or: [
 						{ firstname: 	{ $regex: srchPattern, $options: 'i' }}, // for $in only js-style /patterns/ work!
 						{ lastname: 	{ $regex: srchPattern, $options: 'i' }}
@@ -118,7 +119,7 @@ router.get('/cust_acct', function (req, res, next) { // get endpoint to find cus
 						{ firstname: 	{ $regex: srchPattern, $options: 'i' }}, // for $in only js-style /patterns/ work!
 						{ lastname: 	{ $regex: srchPattern, $options: 'i' }}
 					]},
-				{ 	module: "jak",
+				{ 	module: req.query.module,
 					_acct: acctid }]}) // fmatch to account id of the current account chosen (show only those customers in that account)
   .exec( function (err, custs) {
     if (err) { return next(err); }

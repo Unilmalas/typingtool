@@ -22,27 +22,29 @@ angular.module('app')
   });
 
   $scope.addAcct = function () { // test data
-    //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
+    if ($scope.isAuth) { // authorized?
       TypeSvc.addAcct({
-		module:	  'jak',
+		module:	  $scope.module,
         name:     'testscct',
 		zip:	  '1130'
       })
       .success(function (acct) {
 		console.log('acct stored');
       })
-    /*} else {
-		console.log('You are not authenticated or post empty!');
-	}*/
+    } else {
+		console.log('You are not authenticated');
+	}
   }
   
   $scope.findAcct = function () {
-		//if ($scope.isAuth) {
-			TypeSvc.findAcct ($scope.myAcct)
-			.success(function (accts) {
-				$scope.accts = accts;
-			});
-		//}
+	if ($scope.isAuth) {
+		TypeSvc.findAcct ($scope.module, $scope.myAcct)
+		.success(function (accts) {
+			$scope.accts = accts;
+		});
+	} else {
+	console.log('You are not authenticated');
+	}
   }
   
   $scope.setAcct = function (acct) {
@@ -52,40 +54,42 @@ angular.module('app')
   }
 
   $scope.addCust = function () { // test data
-    //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
+    if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
       TypeSvc.addCust({
-		module:	  'jak',
+		module:	  $scope.module,
         firstname:     'John',
 		lastname:	  'Doe'
       })
       .success(function (cust) {
 		console.log('cust stored');
       })
-    /*} else {
-		console.log('You are not authenticated or post empty!');
-	}*/
+    } else {
+		console.log('You are not authenticated!');
+	}
   }
   
   $scope.findCust = function () {
-		//if ($scope.isAuth) {
-			if ($scope.myAcctId) { // myAcct is set: search customers with restriction to acct
-				TypeSvc.findCust ($scope.myAcctId, $scope.myCust)
-				.success(function (custs) {
-					$scope.custs = custs;
-				});
-			} else { // to do: take out and let svc deal with it
-				TypeSvc.findCust (null, $scope.myCust)
-				.success(function (custs) {
-					$scope.custs = custs;
-				});				
-			}
-		//}
+	if ($scope.isAuth) {
+		if ($scope.myAcctId) { // myAcct is set: search customers with restriction to acct
+			TypeSvc.findCust ($scope.module, $scope.myAcctId, $scope.myCust)
+			.success(function (custs) {
+				$scope.custs = custs;
+			});
+		} else { // to do: take out and let svc deal with it
+			TypeSvc.findCust ($scope.module, null, $scope.myCust)
+			.success(function (custs) {
+				$scope.custs = custs;
+			});				
+		}
+	} else {
+	console.log('You are not authenticated!');
+	}
   }
   
   $scope.setCust = function (cust) {
 	  $scope.myCust = cust.firstname + " " + cust.lastname;
 	  $scope.custs = [];
-	  TypeSvc.findAcctforCust (cust)
+	  TypeSvc.findAcctforCust ($scope.module, cust)
 	  .success(function (custacct) {
 		  //console.log('setcust ' + JSON.stringify(custacct) + ' acct name ' + custacct.name);
 		  $scope.myAcct = custacct.name;
@@ -94,9 +98,9 @@ angular.module('app')
   }
   
   $scope.addQuest = function () { // test data
-    //if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
+    if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
       TypeSvc.addQuest({
-		module:	  	'jak',
+		module:	  	$scope.module,
 		type:		't',
         question:	'What is the capital of Assyria?',
 		answers:	["I don't know that.", "Ashur", "Babylon"],
@@ -105,9 +109,9 @@ angular.module('app')
       .success(function (quest) {
 		console.log('question stored');
       });
-    /*} else {
-		console.log('You are not authenticated or post empty!');
-	}*/
+    } else {
+		console.log('You are not authenticated!');
+	}
   }
   
   $scope.answerQuest = function (answer, anserind, index) {
@@ -117,6 +121,8 @@ angular.module('app')
   }
   
   $scope.submitAnswers = function () {
+	// check if user logged in and authorized
+	if ($scope.isAuth) { // authorized?
 	  // check if all questions have been answered
 	  var i=0;
 	  for (i=0; i<$scope.trackAnswers.length; i++) {
@@ -137,7 +143,10 @@ angular.module('app')
 		$scope.myAcct = null; // inits acct
 		$scope.myAcctId = null;
 		$scope.myCust = null; // inits cust
-	  });	  
+	  });
+    } else {
+		console.log('You are not authenticated!');
+	}	  
   }
   
 });
