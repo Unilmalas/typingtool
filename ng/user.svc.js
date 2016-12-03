@@ -1,3 +1,5 @@
+// services for user admin
+'use strict';
 angular.module('app')
 .service('UserSvc', function ($http) {
   var svc = this;
@@ -8,7 +10,8 @@ angular.module('app')
   
   svc.login = function (username, password) {
     return $http.post('/api/sessions', { // get a JWT coming back from the sessions/post
-      username: username, password: password
+      username: username,
+	  password: password
 	}).then(function (val) {
 	  svc.token = val.data;
 	  $http.defaults.headers.common['X-Auth'] = val.data;
@@ -16,15 +19,45 @@ angular.module('app')
     });
   }
   
-  svc.register = function (username, password) {
+  svc.register = function (username, password) {	
 	return $http.post('/api/users', { // create a user
-		username: username, password: password
+		username: username,
+		password: password
 	}).then(function () {
 		return svc.login(username, password);
 	});
   }
   
-  svc.removeToken = function () {
+  svc.removeToken = function () { // for logout
 	$http.defaults.headers.common['X-Auth'] = "";
   }
+  
+  svc.prereg = function (username, uemail) {	
+	return $http.post('/api/users/prereg', { // create a user temporarily
+		username: username,
+		uemail: uemail
+	}).then(function () {
+		return svc.login(username, password); // no login!
+	});
+  }
+
+  svc.confmail = function (uemail, etoken) {
+	return $http({ // try account search by zip
+		url: '/api/users/confmail',
+		method: "GET",
+		params: { uemail: uemail, etoken: etoken }
+	}).then(function () {
+		//return svc.login(username, password);
+	});
+  }
+  
+  svc.confreg = function (password) {	
+	return $http.post('/api/users/confreg', { // finalize user creation
+		username: username, // xxx!!!!!!!!!!!!!!!
+		password: password
+	}).then(function () {
+		return svc.login(username, password);
+	});
+  }
+
 });
