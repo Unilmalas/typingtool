@@ -37,7 +37,7 @@ angular.module('app')
 		username: username,
 		uemail: uemail
 	}).then(function () {
-		return svc.login(username, password); // no login!
+		return; // no login!
 	});
   }
 
@@ -46,14 +46,13 @@ angular.module('app')
 		url: '/api/users/confmail',
 		method: "GET",
 		params: { uemail: uemail, etoken: etoken }
-	}).then(function () {
-		//return svc.login(username, password);
 	});
   }
   
-  svc.confreg = function (password) {	
+  svc.confreg = function (username, password) {	
+	//console.log('service confreg ' + username + ' pw ' + password);
 	return $http.post('/api/users/confreg', { // finalize user creation
-		username: username, // xxx!!!!!!!!!!!!!!!
+		username: username,
 		password: password
 	}).then(function () {
 		return svc.login(username, password);

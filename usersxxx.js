@@ -13,12 +13,12 @@ var crypto = require ('crypto') // registration token
 
 router.get('/', function (req, res, next) { // get an existing user; /users instead of / - note namespacing in server.js
   if (!req.headers['x-auth']) {
-    return res.sendStatus(401); // 401: unauthorized
+	return res.sendStatus(401); // 401: unauthorized
   }
   var auth = jwt.decode(req.headers['x-auth'], config.secret); // pass a JWT-token and decode
   User.findOne({ username: auth.username }, function (err, user) { // get user from db
-    if (err) { return next(err); }
-    res.json(user);
+	if (err) { return next(err); }
+	res.json(user);
   });
 });
 
@@ -67,7 +67,7 @@ router.post('/prereg', function (req, res, next) { // create a new temporary use
 								// gmail setup: http://masashi-k.blogspot.co.at/2013/06/sending-mail-with-gmail-using-xoauth2.html
 								var generator = require('xoauth2').createXOAuth2Generator({
 									user: 'xxx@gmail.com',
-									clientId: 'xxxx',
+									clientId: 'xxx',
 									clientSecret: 'xxx',
 									refreshToken: 'xxx'
 								});
@@ -93,7 +93,7 @@ router.post('/prereg', function (req, res, next) { // create a new temporary use
 								
 								// setup e-mail data with unicode symbols
 								var mailOptions = {
-									from: '"TypingTool Admin" <bschoss00@gmail.com>', // sender address
+									from: '"TypingTool Admin" <xxx@gmail.com>', // sender address
 									to: 'xxx@yahoo.com', // list of receivers todo: change this to req.body.uemail
 									subject: 'Please confirm your e-mail by following the link given', // Subject line
 									text: conflinkplain // plaintext body
@@ -123,34 +123,41 @@ router.get('/confmail', function (req, res, next) { // confirm registration (fol
 
 	var uemail = req.query.uemail; // readout e-mail parameter of GET-request from conf link
 	var etoken = req.query.etoken; // readout token parameter of GET-request from conf link
-	console.log('confmail: ' + uemail + ' token ' + etoken);
+	//console.log('confmail: ' + uemail + ' token ' + etoken);
 	// check if e-mail and token in temp user collection
-	
-	// user found, populate username and return
-	
-
+	UserTemp.findOne({ 	email: uemail,
+						verified: false,
+						token: etoken }, function (err, user) { // get user from temp user db
+		if (err) { return next(err); }
+		if (user) {
+			// we have found a user
+			res.json(user);
+		} else {
+			// no user found: reg token expired
+		}
+	});
 });
 
 router.post('/confreg', function (req, res, next) { // confirm registration and create user
-	
-	// todo: wip xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-	var uemail = req.query.uemail; // readout e-mail parameter of GET-request from conf link
-	var etoken = req.query.etoken; // readout token parameter of GET-request from conf link
-
-
 	var user = new User({ username: req.body.username });
 	var salt = bcrypt.genSalt(10, function (err, reply) { // generate salt with 10 rounds (bcrypt-nodejs)
 		if (err) { return next(err); }
 		return reply;
 	});
-  //bcrypt.hash(req.body.password, 10, function (err, hash) { // hash user password
-  bcrypt.hash(req.body.password, salt, null, function (err, hash) { // hash user password (bcrypt-nodejs)
-    if (err) { return next(err); }
-    user.password = hash;
-    user.save(function (err) { // save user to db (just hashed password)
-      if (err) { return next(err); }
-      res.sendStatus(201);  // 201: created
-    });
+	//bcrypt.hash(req.body.password, 10, function (err, hash) { // hash user password
+	bcrypt.hash(req.body.password, salt, null, function (err, hash) { // hash user password (bcrypt-nodejs)
+		if (err) { return next(err); }
+		user.password = hash;
+		user.save(function (err) { // save user to db (just hashed password)
+			if (err) { return next(err); }
+			// set verified to true in usertemp
+			UserTemp.update({ 	username: req.body.username,
+								verified: false }, 
+							{	verified: true }, function (err, tuser) { // get user from temp user db
+			if (err) { return next(err); }
+			res.sendStatus(201);  // 201: created
+		});
+	});
   });
 });
 
