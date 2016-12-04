@@ -8,7 +8,8 @@ var Answer = require('../../models/answer');// answers to questions
 var router = require('express').Router();
 
 router.get('/', function (req, res, next) { // get endpoint: note namespace (.use in server.js)
-  Quest.find({ module: req.query.module }) // access passed parameters via req.query.xxxxx
+  Quest.find({ 	module: req.query.module,
+				type:	't' }) // access passed parameters via req.query.xxxxx; only typing questions for not (type = t)
   .exec( function (err, quests) {
     if (err) { return next(err); }
     res.json(quests); // render out the quests as JSON
