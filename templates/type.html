@@ -1,6 +1,7 @@
 <div class="container">
+	<link rel="stylesheet" href="/app.css">
 	<div class "row">
-		<div class="col-md-6">
+		<div class="col-md-4">
 			<!--legend>Find an account...</legend-->
 			<div class="input-group">
 			  <input type="text" ng-model="myAcct" class="form-control" placeholder="Find account...">
@@ -15,10 +16,10 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-4">
 			<!--legend>Find a customer...</legend-->
 			<div class="input-group">
-			  <input type="text" ng-model="myCust" class="form-control" placeholder="Find customer...">
+			  <input type="text" ng-model="myCust" class="form-control" id="custForm" placeholder="Find customer...">
 			  <span class="input-group-btn">
 				<button class="btn btn-default" type="button" ng-click="findCust()">Find</button>
 			  </span>
@@ -30,6 +31,9 @@
 				</div>
 			</div>
 		</div><!-- /.col-lg-6 -->
+		<div class="col-md-4">
+			<button class="btn btn-default pull-right" type="button" ng-click="clearSearch()">Clear Search</button>
+		</div>
 	</div>
 </div>
 <!--button class="btn btn-default" type="button" ng-click="addQuest()">add question</button-->

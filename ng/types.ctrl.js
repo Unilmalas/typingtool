@@ -96,6 +96,14 @@ angular.module('app')
 		  $scope.myAcctId = custacct._id;
 	  });
   }
+
+  $scope.clearSearch = function () {
+	$scope.acct = {};
+	$scope.cust = {};
+	$scope.myAcct = null; // inits acct
+	$scope.myAcctId = null;
+	$scope.myCust = null; // inits cust
+  }
   
   $scope.addQuest = function () { // test data
     if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
