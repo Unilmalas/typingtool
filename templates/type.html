@@ -38,21 +38,23 @@
 </div>
 <!--button class="btn btn-default" type="button" ng-click="addQuest()">add question</button-->
 <div class="container" ng-repeat="quest in quests" ng-init="outerIndex = $index">	
-  <div class="jumbotron">
-	<p>{{ quest.question }}</p>		
+  <!-div class="jumbotron">
+	<h4>{{ quest.question }}</h4>		
 	  <div class="btn-group btn-group-justified">
 		<div ng-repeat="answerind in quest.answers" ng-init="innerIndex = $index" class="btn-group">
 		  <button type="button" class="btn btn-primary" ng-click="answerQuest(quest.answers[innerIndex], innerIndex, outerIndex)">{{ quest.answers[innerIndex] }}</button>
 		</div>
 	  </div>
-  </div>
+  <!--/div-->
 </div>
+<p></p>
 <div class="col-md-10">
 	<button class="btn btn-default pull-right" type="button" ng-click="submitAnswers()">Submit Answers</button>
 </div>
 <div ng-show="answersIncomplete">
 	<h4>Please answer all questions.</h4>
 </div>
+<p></p>
 <div ng-hide="isAuth">
 	<h4>You are not authenticated.</h4>
 </div>

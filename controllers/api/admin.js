@@ -1,4 +1,4 @@
-// API for types including accounts and customers
+// API for admin of accounts, customers and questions
 var Type = require('../../models/type');	// typing event (collects user ans answers for a given date)
 var User   = require('../../models/user');	// user
 var Acct = require('../../models/acct');	// account
@@ -35,7 +35,7 @@ router.get('/acct_mixed', function (req, res, next) { // get endpoint to find ac
   } else {
 	var srchZip = 0;
   }
-  //console.log('mixed srch: ' + srchName + ' zip ' + srchZip);
+  //console.log('mixed srch: ' + srchName + ' zip ' + srchZip + ' mod ' + req.query.module);
   Acct.find( { 	module: req.query.module,
 				$or: [
 					{ name: { $regex: srchName, $options: 'i' } },
@@ -44,6 +44,7 @@ router.get('/acct_mixed', function (req, res, next) { // get endpoint to find ac
   .exec( function (err, accts) {
     if (err) { return next(err); }
 	if(accts.length) {
+		//console.log(accts);
 		res.json(accts);
 	}
   });
@@ -79,19 +80,22 @@ router.get('/acct_zip', function (req, res, next) { // get endpoint to find acco
 });
 
 router.get('/acct_id', function (req, res, next) { // get endpoint to find account by id: note namespace (.use in server.js)
+  //var id = mongoose.Types.ObjectId(req.query._id);
   Acct.findOne({ 	module: req.query.module,
 					_id: req.query._id }) // find returns cursor to the result
   .exec( function (err, acct) {
     if (err) { return next(err); }
+	//console.log('api acct_id ' + req.query._id + ' err ' + err + ' acct ' + acct);
 	res.json(acct);
   });
 });
 
 router.get('/cust_name', function (req, res, next) { // get endpoint to find customer: note namespace (.use in server.js)
   var srchStr = "" + req.query.lastname;
+  //console.log('api ' + srchStr);
   var srchPattern = "";
   if(srchStr=="") srchPattern=".*";
-  else srchPattern = srchStr + ".*";
+  else srchPattern = srchStr;
   //console.log('get cust: ' + srchPattern + ' type ' + typeof srchPattern[0]);
   Cust.find( { 	module: req.query.module,
 				$or: [
@@ -199,16 +203,17 @@ router.post('/cust', function (req, res, next) { // customer post endpoint: note
 });
 
 router.post('/cust_upd', function (req, res, next) { // customer update post endpoint: note namespace (.use in server.js)
-	//console.log('api post cust upd ' + req.body.firstname);
-	Acct.findOneAndUpdate({	module: req.body.module,
+	console.log('api post cust upd ' + JSON.stringify(req.body));
+	Acct.findOneAndUpdate({	module: 	req.body.module,
 							firstname:	req.body.firstname,
 							lastname:	req.body.lastname },
-						  {	module: req.body.module,
+						  { $set: {	module: 	req.body.module,
 							firstname:	req.body.firstname,
-							lastname:	req.body.lastname },
-							{ upsert:true }, function(err, doc) {
+							lastname:	req.body.lastname,
+						  _acct:		req.body._acct }},
+							{ upsert: true }, function(err, doc) {
 		if (err) return res.send(500, { error: err });
-		return res.send("succesfully updated");
+		return res.send("cust succesfully updated");
 	});
 });
 

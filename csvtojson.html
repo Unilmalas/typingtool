@@ -16,7 +16,8 @@
 	  for (var i = 1; i < outlen; i++) { // start with i=1 since first line contains header
 		var doc = outdoc[i].split(",");
 		var oid = doc[2].substring(0, 9) + '"' + doc[2].substring(9, 33) + '")';
-		outfile += '{"module":"jak","firstname":"' + doc[0] + '","lastname":"' + doc[1] + '","_acct":' + oid + '}';
+		//outfile += '{"module":"jak","firstname":"' + doc[0] + '","lastname":"' + doc[1] + '","_acct": ' + doc[2].trim() + '}';
+		outfile += '{"module":"jak","firstname":"' + doc[0] + '","lastname":"' + doc[1] + '","_acct": ' + oid + '}';
 		//console.log('{ "firstname": "' + doc[0] + '", "lastname": "' + doc[1] + '", "_acct": ' + doc[2] + '},');
 		//console.log(outlen + ' : ' + i);
 	  }

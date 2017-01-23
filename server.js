@@ -12,6 +12,7 @@ app.use('/api/type', require('./controllers/api/type'));
 app.use( require('./controllers/static'));
 app.use('/api/sessions', require('./controllers/api/sessions'));
 app.use('/api/users', require('./controllers/api/users'));
+app.use('/api/admin', require('./controllers/api/admin')); // admin module
 
 var server = app.listen(3000, function () {
   console.log('server listening on %d', server.address().port);

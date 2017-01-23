@@ -1,0 +1,91 @@
+<div class="container">
+
+	<div class="jumbotron">
+		<h2>Accounts</h2> 
+		<!--legend>Find an account...</legend-->
+		<div class="input-group">
+		  <input type="text" ng-model="myAcct.name" class="form-control" placeholder="Find account...">
+		  <span class="input-group-btn">
+			<button class="btn btn-default" type="button" ng-click="findAcct()">Find</button>
+		  </span>
+		</div><!-- /input-group -->
+		<!--button class="btn btn-default" type="button" ng-click="addAcct()">add account</button-->
+		<div class="container resAcct">
+			<div ng-class="list ? 'col-md-6' : 'col-md-4'" class="accounts" ng-repeat="acct in accts" ng-click="setAcct(acct)"> 
+				<h4 ng-class="list ? 'col-md-10' : 'col-md-12'">{{ acct.name }}</h4> 
+			</div>
+		</div>
+		<div class="input-group">
+		  <input type="text" ng-model="myAcct.module" class="form-control" placeholder="Module">
+		  <input type="text" ng-model="myAcct.name" class="form-control" placeholder="Name">
+		  <input type="text" ng-model="myAcct.zip" class="form-control" placeholder="Zip">
+		  <button class="btn btn-primary" type="button" ng-click="updateAcct()">Update</button>
+		</div><!-- /input-group -->
+	</div>
+	
+	<div class="jumbotron">
+		<h2>Customers</h2>
+		<!--legend>Find a customer...</legend-->
+		<div class="input-group">
+		  <input type="text" ng-model="myCust.lastname" class="form-control" id="custForm" placeholder="Find customer...">
+		  <span class="input-group-btn">
+			<button class="btn btn-default" type="button" ng-click="findCust()">Find</button>
+		  </span>
+		</div><!-- /input-group -->
+		<!--button class="btn btn-default" type="button" ng-click="addCust()">add customer</button-->
+		<div class="container resCust">
+			<div ng-class="list ? 'col-md-6' : 'col-md-4'" class="custs" ng-repeat="cust in custs" ng-click="setCust(cust)"> 
+				<h4 ng-class="list ? 'col-md-6' : 'col-md-4'">{{ cust.firstname }} {{ cust.lastname }}</h4> 
+			</div>
+		</div>
+		<div class="input-group">
+		  <input type="text" ng-model="myCust.module" class="form-control" placeholder="Module">
+		  <input type="text" ng-model="myCust.firstname" class="form-control" placeholder="First Name">
+		  <input type="text" ng-model="myCust.lastname" class="form-control" placeholder="Last Name">
+		</div>
+		  <div class="input-group">
+			<input type="text" ng-model="myCust.acct" class="form-control" placeholder="Account">
+			<span class="input-group-btn">
+				<button class="btn btn-default" type="button" ng-click="findCustAcct()">Find</button>
+			</span>
+		  </div>
+		  <div class="container resAcctCust">
+			<div ng-class="list ? 'col-md-6' : 'col-md-6'" class="accountsCust" ng-repeat="cacct in caccts" ng-click="setAcctCust(cacct)"> 
+				<h4 ng-class="list ? 'col-md-6' : 'col-md-6'">{{ cacct.name }}</h4> 
+			</div>
+		  </div>
+		  <button class="btn btn-primary" type="button" ng-click="updateCust()">Update</button>
+		  <button class="btn btn-danger" type="button" ng-click="deleteCust()">Delete</button>
+		</div><!-- /input-group -->
+	</div>
+	
+	<div class="jumbotron">
+		<h2>Questions</h2>
+		<!--legend>Find a question...</legend-->
+		<div class="input-group">
+		  <input type="text" ng-model="myQuest" class="form-control" id="questForm" placeholder="Find question...">
+		  <span class="input-group-btn">
+			<button class="btn btn-default" type="button" ng-click="findQuest()">Find</button>
+		  </span>
+		</div><!-- /input-group -->
+		<!--button class="btn btn-default" type="button" ng-click="addCust()">add customer</button-->
+		<div class="container resQuest">
+			<div ng-class="list ? 'col-md-6' : 'col-md-6'" class="quests" ng-repeat="quest in quests" ng-click="setQuest(quest)"> 
+				<h4 ng-class="list ? 'col-md-6' : 'col-md-6'">{{ quest.question }} </h4> 
+			</div>
+		</div>
+		<div class="input-group">
+		  <input type="text" ng-model="myQuest.module" class="form-control" placeholder="Module">
+		  <input type="text" ng-model="myQuest.type" class="form-control" placeholder="Type">
+		  <input type="text" ng-model="myQuest.question" class="form-control" placeholder="Question">
+		  <div class="col-sm-4">
+			<input type="text" ng-model="myQuest.answer" class="form-control" placeholder="Answer">
+		  </div>
+		  <div class="col-sm-4">
+			<input type="text" ng-model="myQuest.points" class="form-control" placeholder="Points">
+		  </div>
+		  <button class="btn btn-primary" type="button" ng-click="updateQuest()">Update</button>
+		</div><!-- /input-group -->
+	</div>
+	
+</div>

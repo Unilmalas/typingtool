@@ -66,10 +66,10 @@ router.post('/prereg', function (req, res, next) { // create a new temporary use
 								// send registration e-mail
 								// gmail setup: http://masashi-k.blogspot.co.at/2013/06/sending-mail-with-gmail-using-xoauth2.html
 								var generator = require('xoauth2').createXOAuth2Generator({
-									user: 'xxx@gmail.com',
-									clientId: 'xxx',
-									clientSecret: 'xxx',
-									refreshToken: 'xxx'
+									user: 'bschoss00@gmail.com',
+									clientId: '785259798300-i62kabd1pet1q559nt4fgik6v30cmtdd.apps.googleusercontent.com',
+									clientSecret: '0kRf85CqNz3x2Zre3QVXNOyx',
+									refreshToken: '1/-C0lpIfcQnYmCQYgr8uCpH0WdV2eftMmwsVcWhjDXtU'
 								});
 							 
 								// listen for token updates 
@@ -93,8 +93,8 @@ router.post('/prereg', function (req, res, next) { // create a new temporary use
 								
 								// setup e-mail data with unicode symbols
 								var mailOptions = {
-									from: '"TypingTool Admin" <xxx@gmail.com>', // sender address
-									to: 'xxx@yahoo.com', // list of receivers todo: change this to req.body.uemail
+									from: '"TypingTool Admin" <bschoss00@gmail.com>', // sender address
+									to: 'bschoss@yahoo.com', // list of receivers todo: change this to req.body.uemail
 									subject: 'Please confirm your e-mail by following the link given', // Subject line
 									text: conflinkplain // plaintext body
 									//html: conflinkhtml // html body
