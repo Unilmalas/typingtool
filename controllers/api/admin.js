@@ -204,13 +204,13 @@ router.post('/cust', function (req, res, next) { // customer post endpoint: note
 
 router.post('/cust_upd', function (req, res, next) { // customer update post endpoint: note namespace (.use in server.js)
 	console.log('api post cust upd ' + JSON.stringify(req.body));
-	Acct.findOneAndUpdate({	module: 	req.body.module,
+	Cust.findOneAndUpdate({	module: 	req.body.module,
 							firstname:	req.body.firstname,
 							lastname:	req.body.lastname },
-						  { $set: {	module: 	req.body.module,
+						  {	module: 	req.body.module,
 							firstname:	req.body.firstname,
 							lastname:	req.body.lastname,
-						  _acct:		req.body._acct }},
+							_acct:		req.body._acct },
 							{ upsert: true }, function(err, doc) {
 		if (err) return res.send(500, { error: err });
 		return res.send("cust succesfully updated");
