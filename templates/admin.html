@@ -48,7 +48,7 @@
 			<span class="input-group-btn">
 				<button class="btn btn-default" type="button" ng-click="findCustAcct()">Find</button>
 			</span>
-		  </div>
+		  </div><!-- /input-group -->
 		  <div class="container resAcctCust">
 			<div ng-class="list ? 'col-md-6' : 'col-md-6'" class="accountsCust" ng-repeat="cacct in caccts" ng-click="setAcctCust(cacct)"> 
 				<h4 ng-class="list ? 'col-md-6' : 'col-md-6'">{{ cacct.name }}</h4> 
@@ -56,14 +56,13 @@
 		  </div>
 		  <button class="btn btn-primary" type="button" ng-click="updateCust()">Update</button>
 		  <button class="btn btn-danger" type="button" ng-click="deleteCust()">Delete</button>
-		</div><!-- /input-group -->
 	</div>
 	
 	<div class="jumbotron">
 		<h2>Questions</h2>
 		<!--legend>Find a question...</legend-->
 		<div class="input-group">
-		  <input type="text" ng-model="myQuest" class="form-control" id="questForm" placeholder="Find question...">
+		  <input type="text" ng-model="myQuest.question" class="form-control" id="questForm" placeholder="Find question...">
 		  <span class="input-group-btn">
 			<button class="btn btn-default" type="button" ng-click="findQuest()">Find</button>
 		  </span>
@@ -78,13 +77,16 @@
 		  <input type="text" ng-model="myQuest.module" class="form-control" placeholder="Module">
 		  <input type="text" ng-model="myQuest.type" class="form-control" placeholder="Type">
 		  <input type="text" ng-model="myQuest.question" class="form-control" placeholder="Question">
-		  <div class="col-sm-4">
-			<input type="text" ng-model="myQuest.answer" class="form-control" placeholder="Answer">
-		  </div>
-		  <div class="col-sm-4">
-			<input type="text" ng-model="myQuest.points" class="form-control" placeholder="Points">
+		  <div ng-repeat="answer in myQuest.answers">
+			<div class="col-sm-4">
+				<input type="text" ng-model="answer" class="form-control" placeholder="Answer">
+			</div>
+			<div class="col-sm-4" >
+				<input type="text" ng-value="myQuest.points[$index]" ng-model="myQuest.points[$index]" class="form-control" placeholder="Points">
+			</div>
 		  </div>
 		  <button class="btn btn-primary" type="button" ng-click="updateQuest()">Update</button>
+		  <button class="btn btn-danger" type="button" ng-click="deleteQuest()">Delete</button>
 		</div><!-- /input-group -->
 	</div>
 	

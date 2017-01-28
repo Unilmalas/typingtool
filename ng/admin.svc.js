@@ -145,4 +145,13 @@ angular.module('app')
 	}
   }
   
+  this.findQuest = function (quest) {
+	console.log('svc querying questions with ' + JSON.stringify(quest));
+	return $http({ // try question search by question from quest
+		url: '/api/admin/quest',
+		method: "GET",
+		params: { module: quest.module, type: quest.type, question: quest.question }
+	});
+  } 
+  
 });

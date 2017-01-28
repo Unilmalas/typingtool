@@ -10,6 +10,7 @@ angular.module('app')
   .success(function () {
 	$scope.myAcct = null; // inits acct
 	$scope.myCust = null; // inits cust
+	$scope.myQuest = null; // inits cust
   });
 
   $scope.updateAcct = function () { // actually upsert: creates a new document when no document matches
@@ -139,6 +140,23 @@ angular.module('app')
 	$scope.myAcct.zip = null;
 	$scope.myAcct._id = null;
 	$scope.myCust = null; // inits cust
+	$scope.myQuest = null; // inits quest
+  }
+
+  $scope.findQuest = function () { // find question to change/delete
+    if ( $scope.isAuth && $scope.isAdmin ) { // postBody from: input ng-model='postBody' in template posts.html
+      AdminSvc.findQuest($scope.myQuest)
+      .success(function (quests) {
+		console.log('ctrl question found ' + JSON.stringify(quests));
+		$scope.myQuest.question = quests.question;
+		$scope.myQuest.module = quests.module;
+		$scope.myQuest.type = quests.type;
+		$scope.myQuest.answers = quests.answers; // check, possibly copy function required
+		$scope.myQuest.points = quests.points;
+      });
+    } else {
+		console.log('You are not authenticated!');
+	}
   }
   
   $scope.updateQuest = function () { // upsert question
