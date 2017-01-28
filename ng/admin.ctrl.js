@@ -13,7 +13,7 @@ angular.module('app')
   });
 
   $scope.updateAcct = function () { // actually upsert: creates a new document when no document matches
-    if ($scope.isAuth) { // authorized? todo: add admin flag on user
+    if ( $scope.isAuth && $scope.isAdmin ) { // authorized? also needs admin rights
       AdminSvc.updateAcct({
 		module:	  $scope.myAcct.module,
         name:     $scope.myAcct.name,
@@ -29,7 +29,7 @@ angular.module('app')
   
   $scope.findAcct = function () { // called from admin accounts
 	//console.log('findAcct: ' + $scope.myAcct);
-	if ($scope.isAuth) {
+	if ( $scope.isAuth && $scope.isAdmin ) {
 		AdminSvc.findAcct ($scope.module, $scope.myAcct.name)
 		.success(function (accts) {
 			$scope.accts = accts;
@@ -41,7 +41,7 @@ angular.module('app')
   
   $scope.findCustAcct = function () { // called from admin customers
 	//console.log('findCustAcct: ' + $scope.myAcct);
-	if ($scope.isAuth) {
+	if ( $scope.isAuth && $scope.isAdmin ) {
 		AdminSvc.findCustAcct ($scope.module, $scope.myCust.acct)
 		.success(function (caccts) {
 			$scope.caccts = caccts;
@@ -68,7 +68,7 @@ angular.module('app')
 
   $scope.updateCust = function () { // upsert cust
     console.log('update cust ctrl ' + JSON.stringify($scope.myCust));
-    if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
+    if ( $scope.isAuth && $scope.isAdmin ) { // postBody from: input ng-model='postBody' in template posts.html
       AdminSvc.updateCust({
 		module:	  		$scope.module,
         firstname:     	$scope.myCust.firstname,
@@ -95,7 +95,7 @@ angular.module('app')
   }
   
   $scope.findCust = function () {
-	if ($scope.isAuth) {
+	if ( $scope.isAuth && $scope.isAdmin ) {
 		if ( $scope.myAcct != null ) {
 			if ($scope.myAcct._id) { // myAcct is set: search customers with restriction to acct
 				AdminSvc.findCust ($scope.module, $scope.myAcct._id, $scope.myCust.lastname)
@@ -142,7 +142,7 @@ angular.module('app')
   }
   
   $scope.updateQuest = function () { // upsert question
-    if ($scope.isAuth) { // postBody from: input ng-model='postBody' in template posts.html
+    if ( $scope.isAuth && $scope.isAdmin ) { // postBody from: input ng-model='postBody' in template posts.html
       AdminSvc.addQuest({
 		module:	  	$scope.module,
 		type:		't',
