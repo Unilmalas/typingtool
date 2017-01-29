@@ -19,6 +19,10 @@ angular.module('app')
   this.updateCust = function (cust) {
     return $http.post('/api/admin/cust_upd', cust);
   }
+  
+  this.deleteCust = function (cust) {
+    return $http.post('/api/admin/cust_del', cust);
+  }
 
   this.addCust = function (cust) {
     return $http.post('/api/admin/cust', cust);
@@ -26,6 +30,14 @@ angular.module('app')
   
   this.addQuest = function (quest) {
     return $http.post('/api/admin/quest', quest);
+  }
+  
+  this.updateQuest = function (quest) {
+    return $http.post('/api/admin/quest_upd', quest);
+  }
+  
+  this.deleteQuest = function (quest) {
+    return $http.post('/api/admin/quest_del', quest);
   }
   
   this.findAcct = function (module, acct) {

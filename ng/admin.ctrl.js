@@ -95,10 +95,27 @@ angular.module('app')
 	}*/
   }
   
+  $scope.deleteCust = function () { // delete cust
+    console.log('delete cust ctrl ' + JSON.stringify($scope.myCust));
+    if ( $scope.isAuth && $scope.isAdmin ) { // postBody from: input ng-model='postBody' in template posts.html
+      AdminSvc.deleteCust({
+		module:	  		$scope.module,
+        firstname:     	$scope.myCust.firstname,
+		lastname:	  	$scope.myCust.lastname,
+		_acct:			$scope.myCust._acct
+      })
+      .success(function (cust) {
+		console.log('cust deleted');
+      })
+    } else {
+		console.log('You are not authenticated!');
+	}
+  }
+  
   $scope.findCust = function () {
 	if ( $scope.isAuth && $scope.isAdmin ) {
 		if ( $scope.myAcct != null ) {
-			if ($scope.myAcct._id) { // myAcct is set: search customers with restriction to acct
+			if ( $scope.myAcct._id ) { // myAcct is set: search customers with restriction to acct
 				AdminSvc.findCust ($scope.module, $scope.myAcct._id, $scope.myCust.lastname)
 				.success(function (custs) {
 					$scope.custs = custs;
@@ -153,6 +170,8 @@ angular.module('app')
 		$scope.myQuest.type = quests.type;
 		$scope.myQuest.answers = quests.answers; // check, possibly copy function required
 		$scope.myQuest.points = quests.points;
+		$scope.myQuest.answers.push("Answer") // add a last entry for new answer choice
+		$scope.myQuest.points.push(0);
       });
     } else {
 		console.log('You are not authenticated!');
@@ -161,15 +180,37 @@ angular.module('app')
   
   $scope.updateQuest = function () { // upsert question
     if ( $scope.isAuth && $scope.isAdmin ) { // postBody from: input ng-model='postBody' in template posts.html
-      AdminSvc.addQuest({
-		module:	  	$scope.module,
-		type:		't',
-        question:	'What is the capital of Assyria?',
-		answers:	["I don't know that.", "Ashur", "Babylon"],
-		points:		[0, 2, 1]
+      //console.log('quest upd ' + $scope.myQuest.answers[$scope.myQuest.answers.length - 1]);
+	  if ( $scope.myQuest.answers[$scope.myQuest.answers.length - 1] == "Answer" ) {
+		$scope.myQuest.answers.pop() // remove last entry since no new addition
+		$scope.myQuest.points.pop();
+	  }
+	  AdminSvc.updateQuest({
+		module:	  	$scope.myQuest.module,
+		type:		$scope.myQuest.type,
+        question:	$scope.myQuest.question,
+		answers:	$scope.myQuest.answers,
+		points:		$scope.myQuest.points
       })
       .success(function (quest) {
-		console.log('question stored');
+		console.log('question updated');
+      });
+    } else {
+		console.log('You are not authenticated!');
+	}
+  }
+  
+  $scope.deleteQuest = function () { // delete question
+    if ( $scope.isAuth && $scope.isAdmin ) { // postBody from: input ng-model='postBody' in template posts.html
+      AdminSvc.deleteQuest({
+		module:	  	$scope.myQuest.module,
+		type:		$scope.myQuest.type,
+        question:	$scope.myQuest.question,
+		answers:	$scope.myQuest.answers,
+		points:		$scope.myQuest.points
+      })
+      .success(function (quest) {
+		console.log('question deleted');
       });
     } else {
 		console.log('You are not authenticated!');

@@ -91,7 +91,7 @@ router.get('/acct_id', function (req, res, next) { // get endpoint to find accou
 });
 
 router.get('/cust_name', function (req, res, next) { // get endpoint to find customer: note namespace (.use in server.js)
-  var srchStr = "" + req.query.lastname;
+  var srchStr = "" + req.query.lastname;  // $regex has to be a string
   //console.log('api ' + srchStr);
   var srchPattern = "";
   if(srchStr=="") srchPattern=".*";
@@ -112,7 +112,7 @@ router.get('/cust_name', function (req, res, next) { // get endpoint to find cus
 });
 
 router.get('/cust_acct', function (req, res, next) { // get endpoint to find customer in acct: note namespace (.use in server.js)
-  var srchStr = "" + req.query.lastname; // fetch lastname from parameters
+  var srchStr = "" + req.query.lastname; // fetch lastname from parameters, $regex has to be a string
   var acctid = req.query._acct; // acct id from parameters
   var srchPattern = "";
   if(srchStr=="") srchPattern=".*";
@@ -217,7 +217,62 @@ router.post('/cust_upd', function (req, res, next) { // customer update post end
 	});
 });
 
-router.post('/quest', function (req, res, next) { // question post endpoint: note namespace (.use in server.js)
+router.post('/cust_del', function (req, res, next) { // customer delete post endpoint: note namespace (.use in server.js)
+	console.log('api post cust del ' + JSON.stringify(req.body));
+	Cust.find({	module: 	req.body.module,
+					firstname:	req.body.firstname,
+					lastname:	req.body.lastname })
+		.remove ( function(err, doc) {
+		if (err) return res.send(500, { error: err });
+		return res.send("cust succesfully deleted");
+	});
+});
+
+router.get('/quest', function (req, res, next) { // get endpoint to find question by question text: note namespace (.use in server.js)
+  var srchModule = "" + req.query.module; // $regex has to be a string
+  console.log('api ' + srchModule + ' typeof ' + typeof srchModule);
+  srchModule = ( srchModule == "" || srchModule == "undefined" ) ? ".*" : srchModule;
+  var srchType = "" + req.query.type;
+  srchType = ( srchType == "" || srchType == "undefined" ) ? ".*" : srchType;
+  var srchStr = "" + req.query.question;
+  if(srchStr=="") srchStr=".*";
+  console.log('api querying questions with ' + srchModule + ' : ' + srchType + ' : ' + srchStr);
+  Quest.findOne({ 	module: 	{ $regex: srchModule, $options: 'i' },
+					type: 		{ $regex: srchType, $options: 'i' },
+					question: 	{ $regex: srchStr, $options: 'i' } }) // find returns cursor to the result
+  .exec( function (err, quest) {
+    if (err) { return next(err); }
+	console.log('api question found ' + JSON.stringify(quest));
+	res.json(quest);
+  });
+});
+
+router.post('/quest_upd', function (req, res, next) { // question update post endpoint: note namespace (.use in server.js)
+	Quest.findOneAndUpdate({ 	module: 	req.body.module,
+								type: 		req.body.type,
+								question:	req.body.question },
+							{ 	module: 	req.body.module,
+								type: 		req.body.type,
+								question:	req.body.question,
+								answers:	req.body.answers,
+								points:		req.body.points },
+							{ upsert: true }, function (err, quest) {
+		if (err) { return next(err); }
+		res.send('question succesfully updated');
+	});
+});
+
+router.post('/quest_del', function (req, res, next) { // question delete post endpoint: note namespace (.use in server.js)
+	Quest.find({ 	module: 	req.body.module,
+					type: 		req.body.type,
+					question:	req.body.question })
+		.remove( function (err, quest) {
+		if (err) { return next(err); }
+		res.send('question succesfully deleted');
+	});
+});
+
+router.post('/quest', function (req, res, next) { // question add post endpoint: note namespace (.use in server.js)
 	var quest = new Quest({ 	module: 	req.body.module,
 								type: 		req.body.type,
 								question:	req.body.question,
